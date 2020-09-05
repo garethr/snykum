@@ -43,6 +43,7 @@ jobs:
           repository: garethr/snykum
           add_git_labels: true
           tag_with_sha: true
+          tag_with_ref: true
           push: false
           args: --platform=linux/arm64 --load
       - name: Run Snyk to check Docker image for vulnerabilities
@@ -66,5 +67,6 @@ jobs:
         with:
           repository: garethr/snykum
           tag_with_sha: true
+          tag_with_ref: true
           args: push
 ```
