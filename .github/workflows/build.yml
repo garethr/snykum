@@ -38,7 +38,6 @@ jobs:
           command: monitor
           image: garethr/snykum
           args: --file=Dockerfile --platform=linux/arm64 --project=docker.io/garethr/snykum
-
       - name: Login
         uses: docker://docker/github-actions:v1
         with:
