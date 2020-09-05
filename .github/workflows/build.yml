@@ -29,11 +29,11 @@ jobs:
           image: garethr/snykum
           args: --file=Dockerfile --platform=linux/arm64
       - name: Push image to Docker Hub
-        uses: docker://docker/github-actions
-        run: push
+        uses: docker://docker/github-actions:v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: garethr/snykum
           add_git_labels: true
           tag_with_sha: true
+          args: push
