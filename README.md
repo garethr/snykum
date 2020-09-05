@@ -1,4 +1,4 @@
-# Snykuk
+# Snykum
 
 ![Image](https://github.com/garethr/snykum/workflows/Image/badge.svg)
 
