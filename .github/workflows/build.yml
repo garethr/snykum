@@ -30,6 +30,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: garethr/snykum
+          args: --file=Dockerfile --platform=linux/arm64
       - name: Push
         run: |
           docker push garethr/snykum
