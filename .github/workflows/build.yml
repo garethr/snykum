@@ -20,17 +20,20 @@ jobs:
       - name: Build
         run: |
           docker build --platform=linux/arm64 --load -t garethr/snykum .
-      - uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
+          command: monitor
           image: garethr/snykum
           args: --file=Dockerfile --platform=linux/arm64
-      - name: Push
-        run: |
-          docker push garethr/snykum
+      - name: Push image to Docker Hub
+        container: docker/github-actions
+        run: push
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: garethr/snykum
+          add_git_labels: true
+          tag_with_sha: true
