@@ -33,4 +33,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Push image to Docker Hub
         run: |
-          docker build --platform=linux/arm64 --push -t garethr/snykum .
+          docker buildx build --platform=linux/arm64 --push -t garethr/snykum .
