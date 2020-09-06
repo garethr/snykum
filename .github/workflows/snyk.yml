@@ -1,0 +1,18 @@
+name: Snyk
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  "0 0 * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Snyk to check Docker image for high severity vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: garethr/snykum
+          args: --platform=linux/arm64 --experimental --project=dockeir.io/garethr/snykum --severity-threshold=high
