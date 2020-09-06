@@ -15,4 +15,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: garethr/snykum
-          args: --platform=linux/arm64 --experimental --project-name=dockeir.io/garethr/snykum --severity-threshold=high
+          args: --platform=linux/arm64 --project-name=dockeir.io/garethr/snykum --severity-threshold=high
