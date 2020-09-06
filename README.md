@@ -22,51 +22,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: github/super-linter@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # QEMU is used to emulated the ARM architecture, allowing us
       # to build not-x86 images
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@master
+      - uses: docker/setup-qemu-action@master
         with:
           platforms: all
-      # Buildx provides an easier way of building DOcker images for other architectures
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@master
-        with:
-          install: true
-      # Using install above sets buildx to be the default for docker build, which
-      # means the build-push-action can use it. Note we don't push the image here
-      # because we want to test it first. Buildx requires additional args as well
-      # to load the image into the local Docker daemon
+      # Buildx provides an easier way of building Docker images for other architectures
+      - uses: docker/setup-buildx-action@master
       - name: Build image
-        uses: docker/build-push-action@v1
-        with:
-          repository: garethr/snykum
-          add_git_labels: true
-          tag_with_sha: true
-          tag_with_ref: true
-          push: false
-          args: --platform=linux/arm64 --load
+        run: |
+          docker buildx build --platform=linux/arm64 --load -t temporary .
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-          image: garethr/snykum
-          args: --file=Dockerfile --platform=linux/arm64 --project=docker.io/garethr/snykum
-      - name: Login
-        uses: docker://docker/github-actions:v1
+          image: temporary
+          args: --file=Dockerfile --platform=linux/arm64 --project-name=docker.io/garethr/snykum
+      - uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          args: login
-      # We use the low-level github-action image in order to access to the
-      # built-in ability to push the SHA automatically
+      # Use the build cache and push the imagee
       - name: Push image to Docker Hub
-        uses: docker://docker/github-actions:v1
-        with:
-          repository: garethr/snykum
-          tag_with_sha: true
-          tag_with_ref: true
-          args: push
+        run: |
+          docker buildx build --platform=linux/arm64 --push -t garethr/snykum .
 ```
