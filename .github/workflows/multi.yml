@@ -29,4 +29,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: garethr/snykum:multiarch
-          args: --platform=linux/arm64
+          args: --platform=linux/arm64 --experimental
