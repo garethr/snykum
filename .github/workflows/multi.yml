@@ -1,0 +1,30 @@
+# Before platform is supported this should pass, as it's testing an alpine
+# image without any vulnerabilities. Once platform is supported this should fail
+# as it should test the debian image for ARM instead.
+
+name: Multi
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build manifest
+        run: |
+          docker manifest create garethr/snykum:multiarch --amend amd64/alpine:latest --amend arm64v8/debian:stable
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Push manifest to Docker Hub
+        run: |
+          docker manifest push -p garethr/snykum:multiarch
+      - name: Run Snyk to check platform image for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: garethr/snykum:multiarch
+          args: --platform=linux/arm64
